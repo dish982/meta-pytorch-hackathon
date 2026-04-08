@@ -1,6 +1,10 @@
 import pandas as pd 
 from typing import Optional
-from models.schema import KYCAction, KYCObservation
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
+from models import KYCAction, KYCObservation
 
 class KYCEnv:
     def __init__(self):

@@ -6,6 +6,6 @@
 
 """Kyc Env environment server components."""
 
-from .kyc_env_environment import KycEnvironment
+from .kyc_env_environment import KYCEnv
 
-__all__ = ["KycEnvironment"]
+__all__ = ["KycEnv"]
