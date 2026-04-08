@@ -37,7 +37,7 @@ dev = [
 [project.scripts]
 # Server entry point - enables running via: uv run --project . server
 # or: python -m kyc_env.server.app
-server = "kyc_env.server.app:main"
+server = "app:main"
 
 [tool.setuptools]
 include-package-data = true

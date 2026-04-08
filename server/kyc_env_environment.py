@@ -1,62 +1,109 @@
-import pandas as pd 
+import pandas as pd
 from typing import Optional
 import sys
 import os
+
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-from models import KYCAction, KYCObservation
+from models import KYCAction, KYCObservation, StepResult
 
 class KYCEnv:
     def __init__(self):
         self.df = pd.read_csv("kyc_data.csv")
         self.cursor = 0
-    
-    def reset(self) -> KYCObservation:
-        self.cursor = 0
+        self.step_count = 0
+        self.episode_id = 0
+
+    async def reset_async(self) -> KYCObservation:
+        return self.reset()
+
+    async def step_async(self, action: KYCAction):
+        return self.step(action)
+
+    @property
+    def state(self) -> KYCObservation:
         return self.getObservation()
+
+    def reset(self) -> StepResult:
+        self.cursor = 0
+        self.step_count = 0
+        self.episode_id += 1
+        obs = self.getObservation()
+
+        return StepResult(
+            observation=obs,
+            reward=0.0,
+            done=False,
+            info={}
+        )
 
     def getObservation(self) -> Optional[KYCObservation]:
         if self.cursor < 0 or self.cursor >= len(self.df):
-            return None
+            return KYCObservation(
+                record_id=-1, name="END", age=0, email="",
+                phone="", city="", step_count=self.step_count, episode_id=str(self.episode_id)
+            )
+        
         row = self.df.iloc[self.cursor]
 
         return KYCObservation(
-            record_id = self.cursor,
+            record_id=self.cursor,
             name=str(row.get('name', '')) if pd.notna(row.get("name")) else "",
             age=row.get('age') if pd.notna(row.get('age')) else None,
             email=str(row.get('email', '')) if pd.notna(row.get('email')) else None,
             phone=str(row.get('phone', '')) if pd.notna(row.get('phone')) else None,
-            city=str(row.get('city', '')) if pd.notna(row.get('city')) else None
+            city=str(row.get('city', '')) if pd.notna(row.get('city')) else None,
+            step_count=self.step_count,
+            episode_id=str(self.episode_id)
         )
 
     def step(self, action: KYCAction):
         obs = self.getObservation()
+        
         if obs is None:
-            return None, 0.0, True, {"correct_was": None}
+            return StepResult(
+                observation=None,
+                reward=0.0,
+                done=True,
+                info={}
+            )
+
+        if obs.record_id == -1:
+            return StepResult(
+                observation=obs,
+                reward=0.0,
+                done=True,
+                info={"msg": "Completed"}
+            )
 
         correct_action = self.get_correct_action(obs)
-
         reward = 1.00 if action.action_id == correct_action else -0.50
 
         self.cursor += 1
+        self.step_count += 1
         done = self.cursor >= len(self.df)
 
         if done:
-            next_obs = None
+            next_obs = self.getObservation()
         else:
-            next_obs = self.getObservation() 
+            next_obs = self.getObservation()
 
-        return next_obs, reward, done, {"correct_was": correct_action}
+        return StepResult(
+            observation=next_obs,
+            reward=reward,
+            done=done,
+            info={"correct_action": correct_action}
+        )
 
     def get_correct_action(self, obs):
         fields = [obs.age, obs.email, obs.phone, obs.city]
-        
+
         # Robust count for missing fields
         missing_count = sum(
-            1 for f in fields 
+            1 for f in fields
             if f is None or str(f).strip() == "" or str(f).lower() == "nan"
         )
-        
+
         # 1. DROP (Priority 1)
         if (obs.age is not None and obs.age < 0) or not obs.name.strip() or obs.name.lower() == "unknown":
             return 3
@@ -71,8 +118,8 @@ class KYCEnv:
 
         # 3. NORMALIZE (Priority 3)
         if (
-            (obs.name != obs.name.strip()) or 
-            (obs.email and obs.email != obs.email.lower()) or 
+            (obs.name != obs.name.strip()) or
+            (obs.email and obs.email != obs.email.lower()) or
             (obs.phone and obs.phone != obs.phone.strip()) or
             (obs.city and obs.city.strip() != "" and obs.city != obs.city.strip())
         ):
@@ -81,5 +128,5 @@ class KYCEnv:
         # 4. IMPUTE (Priority 4)
         if missing_count == 1:
             return 1
-                    
-        return 0 # 5. KEEP
+
+        return 0  # 5. KEEP

@@ -8,6 +8,14 @@ class KYCObservation(BaseModel):
     email: Optional[str]
     phone: Optional[str]
     city: Optional[str]
+    step_count: int
+    episode_id: str
 
 class KYCAction(BaseModel):
     action_id: int
+
+class StepResult(BaseModel):
+    observation: Optional[KYCObservation]
+    reward: float
+    done: bool
+    info: dict

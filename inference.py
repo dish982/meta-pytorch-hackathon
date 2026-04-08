@@ -4,8 +4,8 @@ import textwrap
 from typing import List, Optional
 from openai import OpenAI
 
-from server.kyc_environment import KYCEnv
-from models.schema import KYCAction
+from server.kyc_env_environment import KYCEnv
+from models import KYCAction
 
 # ---------------- CONFIG ---------------- #
 HF_TOKEN = os.getenv("HF_TOKEN")
