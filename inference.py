@@ -144,6 +144,8 @@ async def main():
                 )
 
                 step += 1
+            if not rewards:
+                rewards = [0.5]
 
             log_end(
                 success=True,

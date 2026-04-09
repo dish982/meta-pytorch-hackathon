@@ -79,16 +79,18 @@ class KYCEnv:
         correct_action = self.get_correct_action(obs)
 
         if self.task_id == "missing_data":
-            reward = 0.8 if action.action_id == correct_action else 0.2
+            reward = 0.85 if action.action_id == correct_action else 0.15
 
         elif self.task_id == "format_check":
             reward = 0.85 if action.action_id == correct_action else 0.15
 
         elif self.task_id == "compliance_audit":
-            reward = 0.9 if action.action_id == correct_action else 0.1
+            reward = 0.85 if action.action_id == correct_action else 0.15
 
         else:
             reward = 0.5
+        
+        reward = max(0.05, min(0.95, reward))
 
         self.cursor += 1
         self.step_count += 1
