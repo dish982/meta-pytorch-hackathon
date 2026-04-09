@@ -71,7 +71,7 @@ class KYCEnv:
         if obs is None or obs.record_id == -1:
             return StepResult(
                 observation=obs,
-                reward=0.0,
+                reward=0.5,
                 done=True,
                 info={"msg": "Completed"}
             )
