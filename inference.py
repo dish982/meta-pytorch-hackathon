@@ -8,12 +8,16 @@ from server.kyc_env_environment import KYCEnv
 from models import KYCAction
 
 # ---------------- CONFIG ---------------- #
-HF_TOKEN = os.getenv("HF_TOKEN")
-if not HF_TOKEN:
+API_KEY = os.getenv("API_KEY")
+if not API_KEY:
     raise ValueError("HF_TOKEN environment variable is required")
 
-API_BASE_URL = os.getenv("API_BASE_URL", "https://router.huggingface.co/v1")
+API_BASE_URL = os.getenv("API_BASE_URL")
 MODEL_NAME = os.getenv("MODEL_NAME", "Qwen/Qwen2.5-72B-Instruct")
+
+if not API_BASE_URL or not API_KEY:
+    API_BASE_URL = "https://router.huggingface.co/v1"
+    API_KEY = os.getenv("HF_TOKEN")
 
 TASK_NAME = "kyc-audit"
 BENCHMARK = "disha-kyc-v1"
@@ -101,7 +105,10 @@ What is the Action ID?
 
 # ---------------- MAIN LOOP ---------------- #
 async def main():
-    client = OpenAI(base_url=API_BASE_URL, api_key=HF_TOKEN)
+    base_url = os.environ.get("API_BASE_URL")
+    api_key = os.environ.get("API_KEY")
+
+    client = OpenAI(base_url=API_BASE_URL, api_key=api_key)
     env = KYCEnv()
 
     rewards: List[float] = []
