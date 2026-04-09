@@ -12,7 +12,7 @@ API_KEY = os.environ["API_KEY"]
 if not API_KEY:
     raise ValueError("HF_TOKEN environment variable is required")
 
-API_BASE_URL = os.environ.get["API_BASE_URL"]
+API_BASE_URL = os.environ["API_BASE_URL"]
 MODEL_NAME = os.environ("MODEL_NAME", "Qwen/Qwen2.5-72B-Instruct")
 
 if not API_BASE_URL or not API_KEY:
