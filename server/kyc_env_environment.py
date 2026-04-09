@@ -15,6 +15,7 @@ class KYCEnv:
         self.cursor = 0
         self.step_count = 0
         self.episode_id = 0
+        self.task_id = "missing_data"
 
     async def reset_async(self) -> KYCObservation:
         return self.reset()
@@ -26,17 +27,19 @@ class KYCEnv:
     def state(self) -> KYCObservation:
         return self.getObservation()
 
-    def reset(self) -> StepResult:
+    def reset(self, task_id: str = "missing_data") -> StepResult:
         self.cursor = 0
         self.step_count = 0
         self.episode_id += 1
+        self.task_id = task_id
+
         obs = self.getObservation()
 
         return StepResult(
             observation=obs,
-            reward=0.0,
+            reward=0.5,
             done=False,
-            info={}
+            info={"task_id":task_id}
         )
 
     def getObservation(self) -> Optional[KYCObservation]:
@@ -48,7 +51,6 @@ class KYCEnv:
         
         row = self.df.iloc[self.cursor]
 
-        # Handling NaN for Age specifically to avoid Pydantic Int conversion errors
         raw_age = row.get('age')
         age_val = int(raw_age) if pd.notna(raw_age) else None
 
@@ -75,7 +77,18 @@ class KYCEnv:
             )
 
         correct_action = self.get_correct_action(obs)
-        reward = 1.00 if action.action_id == correct_action else -0.50
+
+        if self.task_id == "missing_data":
+            reward = 0.9 if action.action_id == 1 else 0.1
+
+        elif self.task_id == "format_check":
+            reward = 0.9 if action.action_id == 2 else 0.1
+
+        elif self.task_id == "compliance_audit":
+            reward = 0.9 if action.action_id == correct_action else 0.1
+
+        else:
+            reward = 0.5
 
         self.cursor += 1
         self.step_count += 1

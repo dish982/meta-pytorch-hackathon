@@ -18,7 +18,7 @@ MODEL_NAME = os.environ.get("MODEL_NAME", "Qwen/Qwen2.5-72B-Instruct")
 if not API_BASE_URL or not API_KEY:
     raise ValueError("API_BASE_URL and API_KEY must be set by environment")
 
-TASK_NAME = "kyc-audit"
+TASKS = ["missing_data", "format_check", "compliance_audit"]
 BENCHMARK = "disha-kyc-v1"
 
 # ---------------- LOGGING ---------------- #
@@ -108,63 +108,53 @@ async def main():
     client = OpenAI(base_url=API_BASE_URL, api_key=API_KEY)
     env = KYCEnv()
 
-    rewards: List[float] = []
-    steps_taken = 0
-    success = False
-
-    log_start(task=TASK_NAME, env=BENCHMARK, model=MODEL_NAME)
+    # rewards: List[float] = []
+    # steps_taken = 0
+    # success = False
 
     try:
-        result = env.reset()
-        obs = result.observation
-        done = result.done
-        step = 1
-        # obs = env.reset()
-        # done = False
-        # step = 1
+        for task in TASKS:
+            log_start(task=task, env=BENCHMARK, model=MODEL_NAME)
 
-        while not done:
-            # LLM decision
-            action_id = get_model_action(client, obs)
-            action = KYCAction(action_id=action_id)
-
-            result = env.step(action)
-            
-            # Env step
+            result = env.reset(task_id=task)
             obs = result.observation
-            reward = result.reward
             done = result.done
-            info = result.info 
 
-            rewards.append(reward)
-            steps_taken = step
+            rewards = []
+            step = 1
 
-            log_step(
-                step=step,
-                action=str(action_id),
-                reward=reward,
-                done=done,
-                error=None
+            while not done:
+                action_id = get_model_action(client, obs)
+                action = KYCAction(action_id=action_id)
+
+                result = env.step(action)
+
+                obs = result.observation
+                reward = result.reward
+                done = result.done
+
+                rewards.append(reward)
+
+                log_step(
+                    step=step,
+                    action=str(action_id),
+                    reward=reward,
+                    done=done,
+                    error=None
+                )
+
+                step += 1
+
+            log_end(
+                success=True,
+                steps=step,
+                rewards=rewards
             )
-
-            # if done:
-            #     break
-
-            step += 1
-
-        avg_reward = sum(rewards) / len(rewards) if rewards else 0
-        success = (steps_taken >= len(env.df)) and (avg_reward > 0)
 
     except Exception as e:
         log_step(step=steps_taken, action="error", reward=0.0, done=True, error=str(e))
 
     finally:
-        log_end(
-            success=success,
-            steps=steps_taken,
-            rewards=rewards
-        )
-
         if hasattr(env, "close"):
             result = env.close()
             if asyncio.iscoroutine(result):
