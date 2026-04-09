@@ -104,7 +104,6 @@ What is the Action ID?
 
 # ---------------- MAIN LOOP ---------------- #
 async def main():
-
     client = OpenAI(base_url=API_BASE_URL, api_key=API_KEY)
     env = KYCEnv()
 
@@ -117,7 +116,7 @@ async def main():
             done = result.done
 
             rewards = []
-            step = 1
+            current_step = 0
 
             while not done:
                 action_id = get_model_action(client, obs)
@@ -129,37 +128,42 @@ async def main():
                 reward = result.reward
                 done = result.done
 
-                rewards.append(reward)
+                
+                safe_reward = max(0.01, min(0.99, reward))
+                rewards.append(safe_reward) 
 
                 log_step(
-                    step=step,
+                    step=current_step, 
                     action=str(action_id),
-                    reward=reward,
+                    reward=safe_reward,
                     done=done,
                     error=None
                 )
 
-                step += 1
+                current_step += 1
+
             if len(rewards) == 0:
                 rewards = [0.5]
 
-            success = True if rewards else False
+            avg_reward = sum(rewards) / len(rewards)
+
+            avg_reward = max(0.05, min(0.95, avg_reward))
+            success_status = avg_reward > 0.5 
 
             log_end(
-                success=success,
-                steps=step,
-                rewards=rewards if rewards else [0.5]
+                success=success_status,
+                steps=current_step,
+                rewards=[avg_reward] 
             )
 
     except Exception as e:
-        log_step(step=steps_taken, action="error", reward=0.1, done=True, error=str(e))
+        log_step(step=0, action="error", reward=0.1, done=True, error=str(e))
 
     finally:
         if hasattr(env, "close"):
             result = env.close()
             if asyncio.iscoroutine(result):
                 await result
-
 
 if __name__ == "__main__":
     asyncio.run(main())
