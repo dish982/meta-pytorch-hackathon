@@ -13,7 +13,7 @@ if not API_KEY:
     raise ValueError("HF_TOKEN environment variable is required")
 
 API_BASE_URL = os.environ["API_BASE_URL"]
-MODEL_NAME = os.environ("MODEL_NAME", "Qwen/Qwen2.5-72B-Instruct")
+MODEL_NAME = os.environ.get("MODEL_NAME", "Qwen/Qwen2.5-72B-Instruct")
 
 if not API_BASE_URL or not API_KEY:
     raise ValueError("API_BASE_URL and API_KEY must be set by environment")
@@ -115,17 +115,26 @@ async def main():
     log_start(task=TASK_NAME, env=BENCHMARK, model=MODEL_NAME)
 
     try:
-        obs = env.reset()
-        done = False
+        result = env.reset()
+        obs = result.observation
+        done = result.done
         step = 1
+        # obs = env.reset()
+        # done = False
+        # step = 1
 
         while not done:
             # LLM decision
             action_id = get_model_action(client, obs)
             action = KYCAction(action_id=action_id)
 
+            result = env.step(action)
+            
             # Env step
-            obs, reward, done, info = env.step(action)
+            obs = result.observation
+            reward = result.reward
+            done = result.done
+            info = result.info 
 
             rewards.append(reward)
             steps_taken = step
@@ -138,8 +147,8 @@ async def main():
                 error=None
             )
 
-            if done:
-                break
+            # if done:
+            #     break
 
             step += 1
 
