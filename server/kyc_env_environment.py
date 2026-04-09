@@ -90,7 +90,7 @@ class KYCEnv:
         else:
             reward = 0.5
         
-        reward = max(0.05, min(0.95, reward))
+        reward = max(0.05, min(0.95, reward))   
 
         self.cursor += 1
         self.step_count += 1

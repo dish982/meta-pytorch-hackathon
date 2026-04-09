@@ -154,7 +154,7 @@ async def main():
             )
 
     except Exception as e:
-        log_step(step=steps_taken, action="error", reward=0.0, done=True, error=str(e))
+        log_step(step=steps_taken, action="error", reward=0.1, done=True, error=str(e))
 
     finally:
         if hasattr(env, "close"):
