@@ -108,10 +108,6 @@ async def main():
     client = OpenAI(base_url=API_BASE_URL, api_key=API_KEY)
     env = KYCEnv()
 
-    # rewards: List[float] = []
-    # steps_taken = 0
-    # success = False
-
     try:
         for task in TASKS:
             log_start(task=task, env=BENCHMARK, model=MODEL_NAME)
@@ -144,13 +140,15 @@ async def main():
                 )
 
                 step += 1
-            if not rewards:
+            if len(rewards) == 0:
                 rewards = [0.5]
 
+            success = True if rewards else False
+
             log_end(
-                success=True,
+                success=success,
                 steps=step,
-                rewards=rewards
+                rewards=rewards if rewards else [0.5]
             )
 
     except Exception as e:
