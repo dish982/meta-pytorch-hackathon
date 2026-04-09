@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 from typing import Optional
 import sys
 import os
@@ -9,6 +10,7 @@ from models import KYCAction, KYCObservation, StepResult
 
 class KYCEnv:
     def __init__(self):
+        # CSV load karte waqt ensure karein ki file path sahi hai
         self.df = pd.read_csv("kyc_data.csv")
         self.cursor = 0
         self.step_count = 0
@@ -46,29 +48,25 @@ class KYCEnv:
         
         row = self.df.iloc[self.cursor]
 
+        # Handling NaN for Age specifically to avoid Pydantic Int conversion errors
+        raw_age = row.get('age')
+        age_val = int(raw_age) if pd.notna(raw_age) else None
+
         return KYCObservation(
-            record_id=self.cursor,
+            record_id=int(self.cursor),
             name=str(row.get('name', '')) if pd.notna(row.get("name")) else "",
-            age=row.get('age') if pd.notna(row.get('age')) else None,
+            age=age_val,
             email=str(row.get('email', '')) if pd.notna(row.get('email')) else None,
             phone=str(row.get('phone', '')) if pd.notna(row.get('phone')) else None,
             city=str(row.get('city', '')) if pd.notna(row.get('city')) else None,
-            step_count=self.step_count,
+            step_count=int(self.step_count),
             episode_id=str(self.episode_id)
         )
 
     def step(self, action: KYCAction):
         obs = self.getObservation()
         
-        if obs is None:
-            return StepResult(
-                observation=None,
-                reward=0.0,
-                done=True,
-                info={}
-            )
-
-        if obs.record_id == -1:
+        if obs is None or obs.record_id == -1:
             return StepResult(
                 observation=obs,
                 reward=0.0,
@@ -82,17 +80,13 @@ class KYCEnv:
         self.cursor += 1
         self.step_count += 1
         done = self.cursor >= len(self.df)
-
-        if done:
-            next_obs = self.getObservation()
-        else:
-            next_obs = self.getObservation()
+        next_obs = self.getObservation()
 
         return StepResult(
             observation=next_obs,
             reward=reward,
             done=done,
-            info={"correct_action": correct_action}
+            info={"correct_action": int(correct_action)}
         )
 
     def get_correct_action(self, obs):
@@ -130,3 +124,5 @@ class KYCEnv:
             return 1
 
         return 0  # 5. KEEP
+    def close(self):
+        pass
