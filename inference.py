@@ -29,7 +29,7 @@ def log_step(step: int, action: str, reward: float, done: bool, error: Optional[
     done_val = str(done).lower()
     error_val = error if error is not None else "null"
     print(
-        f"[STEP] step={step} action={action} reward={reward:.2f} done={done_val} error={error_val}",
+        f"[STEP] step={step} action={action} reward={min(reward, 0.999):.3f} done={done_val} error={error_val}",
         flush=True
     )
 
@@ -141,7 +141,8 @@ async def main():
                 current_step += 1
 
             if len(rewards) == 0:
-                rewards = [0.5]
+                rewards = [0.500001]
+            rewards = [max(0.01, min(0.99, r)) for r in rewards]
 
             avg_reward = sum(rewards) / len(rewards)
             avg_reward = max(0.05, min(0.95, avg_reward))

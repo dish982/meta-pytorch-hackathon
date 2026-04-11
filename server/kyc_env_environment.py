@@ -36,7 +36,7 @@ class KYCEnv:
 
         return StepResult(
             observation=obs,
-            reward=0.5,  # Already safe (0,1)
+            reward=0.5,  
             done=False,
             info={"task_id": task_id}
         )
@@ -68,9 +68,11 @@ class KYCEnv:
         obs = self.getObservation()
         
         if obs is None or obs.record_id == -1:
+            reward = 0.5
+            reward = float(max(0.01, min(0.99, reward)))
             return StepResult(
                 observation=obs,
-                reward=0.5,  # Safe default
+                reward=reward, 
                 done=True,
                 info={"msg": "Completed"}
             )
@@ -96,13 +98,14 @@ class KYCEnv:
         else:
             reward = 0.5
         
-        # DOUBLE CLAMP - ensures validator never sees 0.0/1.0
-        reward = max(0.01, min(0.99, reward))   
+        
+        reward = float(max(0.01, min(0.99, reward)))
 
         self.cursor += 1
         self.step_count += 1
         done = self.cursor >= len(self.df)
         next_obs = self.getObservation()
+        
 
         return StepResult(
             observation=next_obs,
