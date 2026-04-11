@@ -56,12 +56,13 @@ Follow this PRIORITY ORDER EXACTLY: 3 > 4 > 2 > 1 > 0
 - Age > 120
 - Email contains test.com, example.com, or tempmail.org
 
-2 (NORMALIZE):
-- Name, Phone, or City has leading/trailing spaces
-- Email contains uppercase letters
 
 1 (IMPUTE):
 - Exactly one field is missing (Age, Email, Phone, or City)
+
+2 (NORMALIZE):
+- Name, Phone, or City has leading/trailing spaces
+- Email contains uppercase letters
 
 0 (KEEP):
 - Record is 100 percent clean
