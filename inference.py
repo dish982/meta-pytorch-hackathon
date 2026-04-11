@@ -49,7 +49,7 @@ Follow this PRIORITY ORDER EXACTLY: 3 > 4 > 2 > 1 > 0
 
 3 (DROP):
 - Name is empty
-- Name is 'Unknown'
+- Name is 'Unknown' 
 - Age is negative
 
 4 (FLAG):
@@ -101,7 +101,6 @@ What is the Action ID?
         # fallback → FLAG
         return 4
 
-
 # ---------------- MAIN LOOP ---------------- #
 async def main():
     client = OpenAI(base_url=API_BASE_URL, api_key=API_KEY)
@@ -127,7 +126,6 @@ async def main():
                 obs = result.observation
                 reward = result.reward
                 done = result.done
-
                 
                 safe_reward = max(0.01, min(0.99, reward))
                 rewards.append(safe_reward) 
@@ -146,7 +144,6 @@ async def main():
                 rewards = [0.5]
 
             avg_reward = sum(rewards) / len(rewards)
-
             avg_reward = max(0.05, min(0.95, avg_reward))
             success_status = avg_reward > 0.5 
 

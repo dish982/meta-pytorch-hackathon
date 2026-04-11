@@ -4,14 +4,12 @@ from typing import Optional
 import sys
 import os
 
-
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from models import KYCAction, KYCObservation, StepResult
 
 class KYCEnv:
     def __init__(self):
-        # CSV load karte waqt ensure karein ki file path sahi hai
         self.df = pd.read_csv("kyc_data.csv")
         self.cursor = 0
         self.step_count = 0
@@ -38,9 +36,9 @@ class KYCEnv:
 
         return StepResult(
             observation=obs,
-            reward=0.5,
+            reward=0.5,  # Already safe (0,1)
             done=False,
-            info={"task_id":task_id}
+            info={"task_id": task_id}
         )
 
     def getObservation(self) -> Optional[KYCObservation]:
@@ -72,35 +70,34 @@ class KYCEnv:
         if obs is None or obs.record_id == -1:
             return StepResult(
                 observation=obs,
-                reward=0.5,
+                reward=0.5,  # Safe default
                 done=True,
                 info={"msg": "Completed"}
             )
 
         correct_action = self.get_correct_action(obs)
 
+        # Guaranteed range: correct=0.6-0.9, wrong=0.1-0.4
         if self.task_id == "missing_data":
             if action.action_id == correct_action:
-                reward = 0.6 + (0.3 * np.random.rand())   
+                reward = 0.6 + (0.3 * np.random.rand())    
             else:
                 reward = 0.1 + (0.3 * np.random.rand())
-
         elif self.task_id == "format_check":
             if action.action_id == correct_action:
-                reward = 0.6 + (0.3 * np.random.rand())   
+                reward = 0.6 + (0.3 * np.random.rand())    
             else:
                 reward = 0.1 + (0.3 * np.random.rand())
-
         elif self.task_id == "compliance_audit":
             if action.action_id == correct_action:
-                reward = 0.6 + (0.3 * np.random.rand())   
+                reward = 0.6 + (0.3 * np.random.rand())    
             else:
                 reward = 0.1 + (0.3 * np.random.rand())
-
         else:
             reward = 0.5
         
-        reward = max(0.05, min(0.95, reward))   
+        # DOUBLE CLAMP - ensures validator never sees 0.0/1.0
+        reward = max(0.01, min(0.99, reward))   
 
         self.cursor += 1
         self.step_count += 1
@@ -149,5 +146,6 @@ class KYCEnv:
             return 1
 
         return 0  # 5. KEEP
+
     def close(self):
         pass
