@@ -2,60 +2,24 @@ spec_version: 1
 name: kyc_env
 type: space
 runtime: fastapi
-app: app:app
+app: server.app:app  # ← app.py ke correct path
 port: 8000
 
 tasks:
   - id: missing_data
-    description: Handle missing fields using imputation
+    description: "Handle missing fields"
     difficulty: easy
-    grader: |
-      def grade(log_lines):
-        rewards = []
-        for line in log_lines:
-          if 'reward=' in line:
-            try:
-              reward = float(line.split('reward=')[1].split(' ')[0])
-              rewards.append(reward)
-            except:
-              pass
-        if not rewards:
-          return 0.5
-        score = sum(rewards) / len(rewards)
-        return max(0.01, min(0.99, score))
+    max_steps: 20
+    grader: "mean_reward"  # ← Official grader name, NO custom code
 
   - id: format_check
-    description: Normalize incorrect formatting
+    description: "Normalize formatting" 
     difficulty: medium
-    grader: |
-      def grade(log_lines):
-        rewards = []
-        for line in log_lines:
-          if 'reward=' in line:
-            try:
-              reward = float(line.split('reward=')[1].split(' ')[0])
-              rewards.append(reward)
-            except:
-              pass
-        if not rewards:
-          return 0.5
-        score = sum(rewards) / len(rewards)
-        return max(0.01, min(0.99, score))
+    max_steps: 20
+    grader: "mean_reward"
 
   - id: compliance_audit
-    description: Full KYC validation with all rules
+    description: "Full KYC validation"
     difficulty: hard
-    grader: |
-      def grade(log_lines):
-        rewards = []
-        for line in log_lines:
-          if 'reward=' in line:
-            try:
-              reward = float(line.split('reward=')[1].split(' ')[0])
-              rewards.append(reward)
-            except:
-              pass
-        if not rewards:
-          return 0.5
-        score = sum(rewards) / len(rewards)
-        return max(0.01, min(0.99, score))
+    max_steps: 20
+    grader: "mean_reward"
