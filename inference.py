@@ -56,13 +56,12 @@ Follow this PRIORITY ORDER EXACTLY: 3 > 4 > 2 > 1 > 0
 - Age > 120
 - Email contains test.com, example.com, or tempmail.org
 
-
-1 (IMPUTE):
-- Exactly one field is missing (Age, Email, Phone, or City)
-
 2 (NORMALIZE):
 - Name, Phone, or City has leading/trailing spaces
 - Email contains uppercase letters
+
+1 (IMPUTE):
+- Exactly one field is missing (Age, Email, Phone, or City)
 
 0 (KEEP):
 - Record is 100 percent clean
@@ -146,9 +145,9 @@ async def main():
             if len(rewards) == 0:
                 rewards = [0.5]
 
-            # avg_reward = sum(rewards) / len(rewards)
+            avg_reward = sum(rewards) / len(rewards)
 
-            # avg_reward = max(0.05, min(0.95, avg_reward))
+            avg_reward = max(0.05, min(0.95, avg_reward))
             success_status = avg_reward > 0.5 
 
             log_end(

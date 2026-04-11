@@ -4,6 +4,7 @@ from typing import Optional
 import sys
 import os
 
+
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from models import KYCAction, KYCObservation, StepResult
@@ -134,11 +135,7 @@ class KYCEnv:
         if (obs.age and obs.age > 120) or is_test_email:
             return 4
 
-        # 3. IMPUTE (Priority 4)
-        if missing_count == 1:
-            return 1
-
-        # 4. NORMALIZE (Priority 3)
+        # 3. NORMALIZE (Priority 3)
         if (
             (obs.name != obs.name.strip()) or
             (obs.email and obs.email != obs.email.lower()) or
@@ -146,6 +143,10 @@ class KYCEnv:
             (obs.city and obs.city.strip() != "" and obs.city != obs.city.strip())
         ):
             return 2
+
+        # 4. IMPUTE (Priority 4)
+        if missing_count == 1:
+            return 1
 
         return 0  # 5. KEEP
     def close(self):
