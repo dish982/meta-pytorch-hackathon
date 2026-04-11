@@ -84,17 +84,17 @@ class KYCEnv:
             if action.action_id == correct_action:
                 reward = 0.6 + (0.3 * np.random.rand())    
             else:
-                reward = 0.1 + (0.3 * np.random.rand())
+                reward = 0.15 + (0.2 * np.random.rand())   
         elif self.task_id == "format_check":
             if action.action_id == correct_action:
                 reward = 0.6 + (0.3 * np.random.rand())    
             else:
-                reward = 0.1 + (0.3 * np.random.rand())
+                reward = 0.15 + (0.2 * np.random.rand())  
         elif self.task_id == "compliance_audit":
             if action.action_id == correct_action:
                 reward = 0.6 + (0.3 * np.random.rand())    
             else:
-                reward = 0.1 + (0.3 * np.random.rand())
+                reward = 0.15 + (0.2 * np.random.rand()) 
         else:
             reward = 0.5
         
