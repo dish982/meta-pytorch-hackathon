@@ -10,7 +10,7 @@ from models import KYCAction
 # ---------------- CONFIG ---------------- #
 API_KEY = os.environ["API_KEY"]
 if not API_KEY:
-    raise ValueError("HF_TOKEN environment variable is required")
+    raise ValueError("API_KEY environment variable is required")
 
 API_BASE_URL = os.environ["API_BASE_URL"]
 MODEL_NAME = os.environ.get("MODEL_NAME", "Qwen/Qwen2.5-72B-Instruct")
@@ -116,7 +116,7 @@ async def main():
             done = result.done
 
             rewards = []
-            current_step = 0
+            current_step = 1
 
             while not done:
                 action_id = get_model_action(client, obs)
@@ -152,12 +152,12 @@ async def main():
 
             log_end(
                 success=success_status,
-                steps=current_step,
+                steps=current_step-1,
                 rewards=[avg_reward] 
             )
 
     except Exception as e:
-        log_step(step=0, action="error", reward=0.1, done=True, error=str(e))
+        log_step(step=1, action="error", reward=0.1, done=True, error=str(e))
 
     finally:
         if hasattr(env, "close"):
