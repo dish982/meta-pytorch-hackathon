@@ -145,15 +145,15 @@ async def main():
             if len(rewards) == 0:
                 rewards = [0.5]
 
-            avg_reward = sum(rewards) / len(rewards)
+            # avg_reward = sum(rewards) / len(rewards)
 
-            avg_reward = max(0.05, min(0.95, avg_reward))
+            # avg_reward = max(0.05, min(0.95, avg_reward))
             success_status = avg_reward > 0.5 
 
             log_end(
                 success=success_status,
                 steps=current_step-1,
-                rewards=[avg_reward] 
+                rewards=rewards 
             )
 
     except Exception as e:
