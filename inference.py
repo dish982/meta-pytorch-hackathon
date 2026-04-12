@@ -127,18 +127,20 @@ async def main():
                 reward = result.reward
                 done = result.done
                 
-                safe_reward = max(0.01, min(0.99, reward))
-                rewards.append(safe_reward) 
+                if obs is not None and obs.record_id != -1:
+                    safe_reward = max(0.01, min(0.99, float(reward)))
+                    rewards.append(safe_reward)
 
-                log_step(
-                    step=current_step, 
-                    action=str(action_id),
-                    reward=safe_reward,
-                    done=done,
-                    error=None
-                )
-
-                current_step += 1
+                    log_step(
+                        step=current_step, 
+                        action=str(action_id),
+                        reward=safe_reward,
+                        done=done,
+                        error=None
+                    )
+                    current_step += 1
+                else:
+                    pass
 
             if len(rewards) == 0:
                 rewards = [0.500001]
