@@ -248,7 +248,7 @@ class KYCEnv:
 
         
         if obs is None or obs.record_id == -1:
-            reward = 0.5
+            reward = 0.5001
             reward = float(np.clip(reward, 1e-4, 1 - 1e-4))
 
             return StepResult(
