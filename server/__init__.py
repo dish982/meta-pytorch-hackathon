@@ -8,4 +8,4 @@
 
 from .kyc_env_environment import KYCEnv
 
-__all__ = ["KycEnv"]
+__all__ = ["KYCEnv"]

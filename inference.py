@@ -162,7 +162,7 @@ async def main():
             log_end(
                 success=success_status,
                 steps=current_step,
-                rewards=[avg_reward]
+                rewards=[]
             )
 
     except Exception as e:

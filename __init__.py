@@ -6,7 +6,7 @@
 
 """Kyc Env Environment."""
 
-from .client import KycEnv
+from server.kyc_env_environment import KYCEnv
 from .models import KycAction, KycObservation
 
 __all__ = [
