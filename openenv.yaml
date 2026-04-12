@@ -1,3 +1,10 @@
+spec_version: 1
+name: kyc_env
+type: space
+runtime: fastapi
+app: server.app:app 
+port: 8000
+
 tasks:
   - id: missing_data
     description: Handle missing fields using imputation
