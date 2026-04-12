@@ -1,25 +1,45 @@
-spec_version: 1
-name: kyc_env
-type: space
-runtime: fastapi
-app: server.app:app 
-port: 8000
-
 tasks:
   - id: missing_data
-    description: "Handle missing fields"
+    description: Handle missing fields using imputation
     difficulty: easy
-    max_steps: 20
-    grader: "mean_reward"  
+    grader: |
+      def grade(log_lines):
+        rewards = []
+        for l in log_lines:
+          if 'reward=' in l:
+            try:
+              val = float(l.split('reward=')[1].split(' ')[0])
+              rewards.append(val)
+            except:
+              pass
+        return max(0.01, min(0.99, sum(rewards)/len(rewards))) if rewards else 0.5
 
   - id: format_check
-    description: "Normalize formatting" 
+    description: Normalize incorrect formatting
     difficulty: medium
-    max_steps: 20
-    grader: "mean_reward"
+    grader: |
+      def grade(log_lines):
+        rewards = []
+        for l in log_lines:
+          if 'reward=' in l:
+            try:
+              val = float(l.split('reward=')[1].split(' ')[0])
+              rewards.append(val)
+            except:
+              pass
+        return max(0.01, min(0.99, sum(rewards)/len(rewards))) if rewards else 0.5
 
   - id: compliance_audit
-    description: "Full KYC validation"
+    description: Full KYC validation with all rules
     difficulty: hard
-    max_steps: 20
-    grader: "mean_reward"
+    grader: |
+      def grade(log_lines):
+        rewards = []
+        for l in log_lines:
+          if 'reward=' in l:
+            try:
+              val = float(l.split('reward=')[1].split(' ')[0])
+              rewards.append(val)
+            except:
+              pass
+        return max(0.01, min(0.99, sum(rewards)/len(rewards))) if rewards else 0.5
