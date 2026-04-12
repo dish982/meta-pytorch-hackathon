@@ -2,7 +2,7 @@ spec_version: 1
 name: kyc_env
 type: space
 runtime: fastapi
-app: server.app:app  # ← app.py ke correct path
+app: server.app:app 
 port: 8000
 
 tasks:
@@ -10,7 +10,7 @@ tasks:
     description: "Handle missing fields"
     difficulty: easy
     max_steps: 20
-    grader: "mean_reward"  # ← Official grader name, NO custom code
+    grader: "mean_reward"  
 
   - id: format_check
     description: "Normalize formatting" 

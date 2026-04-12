@@ -246,7 +246,7 @@ class KYCEnv:
     def step(self, action: KYCAction):
         obs = self.getObservation()
 
-        # ✅ SAFE TERMINATION
+        
         if obs is None or obs.record_id == -1:
             reward = 0.5
             reward = float(np.clip(reward, 1e-4, 1 - 1e-4))
@@ -260,7 +260,7 @@ class KYCEnv:
 
         correct_action = self.get_correct_action(obs)
 
-        # ✅ STOCHASTIC REWARD (prevents perfect scoring collapse)
+        
         if self.task_id in ["missing_data", "format_check", "compliance_audit"]:
             if action.action_id == correct_action:
                 reward = 0.7 + (0.15 * np.random.rand())  # 0.70–0.85
@@ -269,7 +269,7 @@ class KYCEnv:
         else:
             reward = 0.5
 
-        # ✅ FINAL SAFETY CLAMP (CRITICAL)
+        
         reward = float(np.clip(reward, 1e-4, 1 - 1e-4))
 
         self.cursor += 1
