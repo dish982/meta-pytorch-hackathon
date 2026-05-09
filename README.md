@@ -78,3 +78,23 @@ To ensure consistency, the environment follows a strict hierarchy for determinin
    ```bash
    git clone [https://github.com/disha9/disha-kyc-env.git](https://github.com/disha9/disha-kyc-env.git)
    cd disha-kyc-env
+   
+# 🧠 LLM Integration & Deployment
+Model: Qwen 2.5-72B-Instruct.
+
+API: Integrated via Hugging Face 
+
+Environment: Pushed to Hugging Face Hub via openenv CLI.
+
+Stack: Managed with uv and containerized using Docker.
+
+# 📈 Hackathon Performance
+This was a project made for problem statement of Meta x Pytorch (Scaler) Hackathon 2026 
+
+Phase 1: Interaction Logic
+Status: Passed all checks 
+
+Phase 2: Credit Score Constraint
+Status: One check failed
+
+Caption: Credit Score Validation check failure logs.
