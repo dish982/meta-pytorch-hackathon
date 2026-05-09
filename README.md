@@ -88,13 +88,22 @@ Environment: Pushed to Hugging Face Hub via openenv CLI.
 
 Stack: Managed with uv and containerized using Docker.
 
+![Hugging face interface of Enviornment](hugging_face_interface.png)
+
+
 # 📈 Hackathon Performance
 This was a project made for problem statement of Meta x Pytorch (Scaler) Hackathon 2026 
 
 Phase 1: Interaction Logic
 Status: Passed all checks 
 
+![Phase 1 checks](phase 1 check.png)
+
+
 Phase 2: Credit Score Constraint
 Status: One check failed
 
 Caption: Credit Score Validation check failure logs.
+
+![Phase 2 checks](phase 2 check.png)
+
