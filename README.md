@@ -97,7 +97,8 @@ This was a project made for problem statement of Meta x Pytorch (Scaler) Hackath
 Phase 1: Interaction Logic
 Status: Passed all checks 
 
-![Phase 1 checks](phase 1 check.png)
+![Phase 1 checks](phase%201%20check.png)
+
 
 
 Phase 2: Credit Score Constraint
@@ -105,5 +106,5 @@ Status: One check failed
 
 Caption: Credit Score Validation check failure logs.
 
-![Phase 2 checks](phase 2 check.png)
+![Phase 2 checks](phase%202%20check.png)
 
